@@ -1,32 +1,49 @@
+import { ObjectManager } from "../utils/objectManager";
 import { GameObject } from "./gameObject";
 
 export class ComponentManager {
-    static bitmap: Int8Array;
+    private _initialized = false;
+    public static _componentGameObjects: ObjectManager<GameObject[]>;
+    public static _components: ObjectManager<Component>;
+    public static _instances: ObjectManager<Component>;
 }
 
 export class Component {
-    public static _componentMap: {[name: string]: number};
-    public static _totalComponents: number;
-    public static _totalComponentInstances: number;
+    private static _initialized = false;
+    public static _componentGameObjects: ObjectManager<GameObject[]>;
+    public static _components: ObjectManager<Component>;
+    public static _instances: ObjectManager<Component>;
 
     public readonly id: number;
     public readonly instanceId: number;
 
     constructor() {
-        if (typeof Component._totalComponents === 'undefined') {
-            Component._totalComponents = 0;
-            Component._totalComponentInstances = 0;
-            Component._componentMap = {};
+
+        Component.initialize();
+
+        this.id = Component._components.size;
+        this.instanceId = Component._instances.size;
+
+        Component._components.add(this.constructor.name, this);
+        Component._instances.add(this.id, this);
+    }
+
+    private static initialize() {
+        if (!Component._initialized) {
+            Component._componentGameObjects = new ObjectManager<GameObject[]>();
+            Component._components = new ObjectManager<Component>();
+            Component._instances = new ObjectManager<Component>();
+            Component._initialized = true;
+        }
+    }
+
+    public registerGameObject(gameObject: GameObject) {
+        Component.initialize();
+
+        if (!Component._componentGameObjects.exists(this.constructor.name)) {
+            Component._componentGameObjects.add(this.constructor.name, []);
         }
 
-        if (!Component._componentMap.hasOwnProperty(this.constructor.name)) {
-            Component._componentMap[this.constructor.name] = Component._totalComponents;
-            Component._totalComponents += 1;
-        }
-
-        this.id = Component._componentMap[this.constructor.name];
-        this.instanceId = Component._totalComponentInstances;
-
-        Component._totalComponentInstances += 1;
+        Component._componentGameObjects.findOne(this.constructor.name).push(gameObject);
     }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "ml-2d",
+  "name": "ml2d",
   "version": "1.0.0",
   "description": "Simple 2D game engine for visual ml experiments",
   "main": "dist/index.js",

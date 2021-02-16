@@ -1,34 +1,33 @@
 import { VectorMath } from "../math/vectorMath";
+import { ObjectManager } from "../utils/objectManager";
 import { Component } from "./component";
 import { Vector } from "./vector";
 
 export class GameObject {
-    static _totalGameObjects: number;
+
+    private static _initialized = false;
+    public static _instances: ObjectManager<GameObject>;
+    
+    public readonly components: ObjectManager<Component>;
 
     public readonly id: number;
     public name: string;
     public parent: GameObject | null = null;
     public readonly children: GameObject[];
-    public readonly components: Component[];
-    public pos: Vector;
 
     constructor() {
-        if (typeof GameObject._totalGameObjects === 'undefined') {
-            GameObject._totalGameObjects = 0;
+        if (!GameObject._initialized) {
+            GameObject._instances = new ObjectManager<GameObject>();
+            GameObject._initialized = true;
         }
 
-        this.id = GameObject._totalGameObjects;
+        this.id = GameObject._instances.size;
+
+        GameObject._instances.add(this.id, this);
+
         this.name = `GameObject_${this.id}`;
-        this.pos = Vector.zero(2);
         this.children = [];
-        this.components = [];
-
-        GameObject._totalGameObjects += 1;
-    }
-
-    public setPos(pos: Vector) {
-        this.pos = pos;
-        return this;
+        this.components = new ObjectManager<Component>();
     }
 
     // Preorder traverse the game object
@@ -39,28 +38,6 @@ export class GameObject {
         }
     }
 
-    public get globalPos(): Vector {
-        if (this.parent) {
-            return VectorMath.add(this.parent.globalPos, this.pos);
-        } else {
-            return this.pos.copy();
-        }
-    }
-
-    public setGlobalPos(pos: Vector): GameObject {
-        if (this.parent) {
-            this.pos = VectorMath.subtract(pos, this.parent.globalPos);
-        } else {
-            this.pos = pos;
-        }
-        return this;
-    }
-
-    public move(offset: Vector) {
-        this.pos.add(offset);
-        return this;
-    }
-
     public add(): GameObject {
         const go = new GameObject();
         go.parent = this;
@@ -69,11 +46,12 @@ export class GameObject {
     }
 
     public addComponent<T extends Component>(component: T): GameObject {
-        this.components.push(component);
+        this.components.add(component.constructor.name, component);
+        component.registerGameObject(this);
         return this;
     }
 
-    public getComponent<T extends Component>(): T {
-
+    public getComponent<T>(type: new () => T): Component {
+        return this.components.findOne(type.name);
     }
 }

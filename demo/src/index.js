@@ -1,9 +1,10 @@
-import ML2D from 'ml-2d';
+import ML2D from 'ml2d';
 import { Vector, Vector2D } from '../../dist/core/vector';
 import { VectorMath } from '../../dist/math/vectorMath';
 import { Circle } from '../../dist/renderables/circle';
 import HCore from 'hcore';
 import { GameObject } from '../../dist/core/gameObject';
+import { Component } from '../../dist/core/component';
 
 const size = new Vector2D(1400, 900);
 const anchor = new Vector2D(size.x / 2, size.y / 4);
@@ -139,19 +140,25 @@ class GameObjectDemo extends ML2D.Game {
 
     OnCreate() {
         this.root = new GameObject();
+        this.root.addComponent(new ML2D.Components.Position2D());
     }
 
     OnUpdate(dt) {
+        const pos = this.root.getComponent(ML2D.Components.Position2D);
+        pos.move(VectorMath.multScalar(this.input.state.leftAxis, dt * 200));
 
-        this.root.move(VectorMath.multScalar(this.input.state.leftAxis, dt * 200));
+        console.log(pos.position.toString());
         
-        ML2D.GameObject.traverse(this.root, (go) => {
+        this.canvas.draw(new Circle(pos.position.copy(), 20));
+
+        /*ML2D.GameObject.traverse(this.root, (go) => {
             this.canvas.draw(new Circle(go.globalPos, 20));
         });
 
         if (this.input.state.firePressed) {
             this.root.add().setGlobalPos(this.input.globalMousePos);
         }
+        */
 
         if (this.input.state.fireAltPressed) {
             console.log("Right click");
@@ -174,7 +181,11 @@ const a = new Transform();
 const b = new Transform();
 const c = new CollisionComponent();
 const d = new CollisionComponent();
-console.log(a,b,c,d);
+
+console.log(Component._components);
+console.log(Component._instances);
+
+console.log(GameObject._instances);
 
 goDemo.run();
 

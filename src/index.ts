@@ -2,6 +2,7 @@ import { Bot } from './core/bot';
 import { Canvas } from './core/canvas';
 import { Collisions } from './core/collisions';
 import { Component } from './core/component';
+import { Position2DComponent } from './core/components/position';
 import { Game } from './core/game';
 import { GameObject } from './core/gameObject';
 import { Matrix } from './core/matrix';
@@ -24,6 +25,9 @@ const ML2D = {
     },
     Math: {
         angle: angle,
+    },
+    Components: {
+        Position2D: Position2DComponent,
     },
     Game: Game,
     Canvas: Canvas,
