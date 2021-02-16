@@ -1,22 +1,23 @@
 import { ObjectManager } from "../utils/objectManager";
 
-export class System {
-    private static _initialized = false;
-    public static _systems: ObjectManager<System>;
+export class SystemManager {
+    public readonly systems: ObjectManager<System>;
 
     constructor() {
-        if (!System._initialized) {
-            System._systems = new ObjectManager<System>();
-        }
-
-        System._systems.add(this.constructor.name, this);
+        this.systems = new ObjectManager<System>();
     }
 
-    public static forAll(fn: (system: System) => any) {
-        for (const sys of System._systems.all) {
-            fn(sys);
-        }    
+    public instantiate<T extends System>(ctr: new () => T): T {
+        const system = new ctr();
+        system.id = this.systems.size;
+        this.systems.add(ctr.name, system);
+        return system;
     }
+}
+
+export class System {
+
+    public id: number;
 
     protected OnCreate() {}
     protected OnBeforeUpdate() {}

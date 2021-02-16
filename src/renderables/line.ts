@@ -1,5 +1,5 @@
 import { Renderable } from "../core/renderable";
-import { Vector, Vector2D } from "../core/vector";
+import { Vector } from "../core/vector";
 
 export class Line extends Renderable {
 

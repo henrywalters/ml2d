@@ -1,34 +1,34 @@
 import { VectorMath } from "../math/vectorMath";
 import { ObjectManager } from "../utils/objectManager";
 import { Component } from "./component";
+import { Game } from "./game";
 import { Vector } from "./vector";
+
+export class GameObjectManager {
+    public instances: ObjectManager<GameObject>;
+
+    constructor() {
+        this.instances = new ObjectManager<GameObject>();
+    }
+
+    public instantiate(): GameObject {
+        const go = new GameObject();
+        go.id = this.instances.size;
+        go.components = new ObjectManager<Component>();
+        go.name = `GameObject_${go.id}`;
+        go.children = [];
+        this.instances.add(go.id, go);
+        return go;
+    }
+}
 
 export class GameObject {
 
-    private static _initialized = false;
-    public static _instances: ObjectManager<GameObject>;
-    
-    public readonly components: ObjectManager<Component>;
-
-    public readonly id: number;
+    public id: number;
     public name: string;
     public parent: GameObject | null = null;
-    public readonly children: GameObject[];
-
-    constructor() {
-        if (!GameObject._initialized) {
-            GameObject._instances = new ObjectManager<GameObject>();
-            GameObject._initialized = true;
-        }
-
-        this.id = GameObject._instances.size;
-
-        GameObject._instances.add(this.id, this);
-
-        this.name = `GameObject_${this.id}`;
-        this.children = [];
-        this.components = new ObjectManager<Component>();
-    }
+    public children: GameObject[];
+    public components: ObjectManager<Component>;
 
     // Preorder traverse the game object
     public static traverse(root: GameObject, fn: (gameObject: GameObject) => void) {
@@ -45,9 +45,9 @@ export class GameObject {
         return go;
     }
 
-    public addComponent<T extends Component>(component: T): GameObject {
-        this.components.add(component.constructor.name, component);
-        component.registerGameObject(this);
+    public addComponent<T extends Component>(ctr: new () => T): GameObject {
+        const component = Game.Active.components.instantiate(ctr);
+        this.components.add(ctr.name, component);
         return this;
     }
 

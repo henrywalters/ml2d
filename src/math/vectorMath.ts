@@ -28,6 +28,15 @@ export class VectorMath {
         return out;
     }
 
+    public static div(a: Vector, b: Vector): Vector {
+        const out = Vector.zero(a.dim);
+        a.validateSameDim(b);
+        for (let i = 0; i < a.dim; i++) {
+            out.set(i, a.get(i) / b.get(i));
+        }
+        return out;
+    }
+
     public static multScalar(a: Vector, s: number): Vector {
         const out = Vector.zero(a.dim);
         for (let i = 0; i < a.dim; i++) {

@@ -1,5 +1,5 @@
 import { VectorMath } from "../math/vectorMath";
-import { Vector, Vector2D } from "./vector";
+import { Vector } from "./vector";
 
 export class Matrix {
     private rows: Vector[];
@@ -29,8 +29,8 @@ export class Matrix {
         }
     }
 
-    public size(): Vector2D {
-        return new Vector2D(this.m, this.n);
+    public size(): Vector {
+        return new Vector([this.m, this.n]);
     }
 
     public toString(precision: number): string {
@@ -42,7 +42,7 @@ export class Matrix {
         return out.join('\n');
     }
 
-    public static zero(size: Vector2D): Matrix {
+    public static zero(size: Vector): Matrix {
         const rows = [];
         for (let i = 0; i < size.get(0); i++) {
             const row = [];

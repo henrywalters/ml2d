@@ -18,6 +18,14 @@ export class Vector {
         return new Vector(zeros);
     }
 
+    public static uniform(size: number, val: number) {
+        let uni: number[] = [];
+        for (let i = 0; i < size; i++) {
+            uni.push(val);
+        }
+        return new Vector(uni);
+    }
+
     public static random(size: number, min: number, max: number) {
         return Vector.zero(size).map(x => HCore.Random.float(min, max));
     }
@@ -164,57 +172,5 @@ export class Vector {
 
     public toString(precision: number = 3): string {
         return `[${this.raw.map(x => x.toFixed(precision)).join(', ')}]`;
-    }
-}
-
-export class Vector2D extends Vector {
-    constructor(x: number, y: number) {
-        super([x, y]);
-    }
-
-    public get x() {
-        return this.get(0)
-    }
-
-    public get y() {
-        return this.get(1);
-    }
-
-    public set x(val: number) {
-        this.set(0, val);
-    }
-
-    public set y(val: number) {
-        this.set(1, val);
-    }
-}
-
-export class Vector3D extends Vector {
-    constructor(x: number, y: number, z: number) {
-        super([x, y, z]);
-    }
-
-    public get x() {
-        return this.get(0)
-    }
-
-    public get y() {
-        return this.get(1);
-    }
-
-    public get z() {
-        return this.get(2);
-    }
-
-    public set x(val: number) {
-        this.set(0, val);
-    }
-
-    public set y(val: number) {
-        this.set(1, val);
-    }
-
-    public set z(val: number) {
-        this.set(2, val);
     }
 }

@@ -1,3 +1,5 @@
+import { GraphAxis } from './addons/graphAxis';
+import { StraightGraphLine } from './addons/graphLine';
 import { Bot } from './core/bot';
 import { Canvas } from './core/canvas';
 import { Collisions } from './core/collisions';
@@ -28,6 +30,14 @@ const ML2D = {
     },
     Components: {
         Position2D: Position2DComponent,
+    },
+    Addons: {
+        Graph: {
+            Axis: GraphAxis,
+            Lines: {
+                Straight: StraightGraphLine,
+            }
+        }
     },
     Game: Game,
     Canvas: Canvas,

@@ -2,48 +2,35 @@ import { ObjectManager } from "../utils/objectManager";
 import { GameObject } from "./gameObject";
 
 export class ComponentManager {
-    private _initialized = false;
-    public static _componentGameObjects: ObjectManager<GameObject[]>;
-    public static _components: ObjectManager<Component>;
-    public static _instances: ObjectManager<Component>;
+    public readonly componentGameObjects: ObjectManager<GameObject[]>;
+    public readonly components: ObjectManager<new () => Component>;
+    public readonly instances: ObjectManager<Component>;
+
+    constructor() {
+        this.componentGameObjects = new ObjectManager<GameObject[]>();
+        this.components = new ObjectManager<new () => Component>();
+        this.instances = new ObjectManager<Component>();
+    }
+
+    public instantiate<T extends Component>(ctr: new () => T): T {
+        const component = new ctr();
+        component.id = this.components.size;
+        component.instanceId = this.instances.size;
+        this.components.add(component.id, ctr);
+        this.instances.add(ctr.name, component);
+        return component;
+    }
+
+    public registerGameObject<T extends Component>(type: new () => T, gameObject: GameObject) {
+        if (!this.componentGameObjects.exists(type.name)) {
+            this.componentGameObjects.add(type.name, []);
+        }
+
+        this.componentGameObjects.findOneOrFail(type.name).push(gameObject);
+    }
 }
 
 export class Component {
-    private static _initialized = false;
-    public static _componentGameObjects: ObjectManager<GameObject[]>;
-    public static _components: ObjectManager<Component>;
-    public static _instances: ObjectManager<Component>;
-
-    public readonly id: number;
-    public readonly instanceId: number;
-
-    constructor() {
-
-        Component.initialize();
-
-        this.id = Component._components.size;
-        this.instanceId = Component._instances.size;
-
-        Component._components.add(this.constructor.name, this);
-        Component._instances.add(this.id, this);
-    }
-
-    private static initialize() {
-        if (!Component._initialized) {
-            Component._componentGameObjects = new ObjectManager<GameObject[]>();
-            Component._components = new ObjectManager<Component>();
-            Component._instances = new ObjectManager<Component>();
-            Component._initialized = true;
-        }
-    }
-
-    public registerGameObject(gameObject: GameObject) {
-        Component.initialize();
-
-        if (!Component._componentGameObjects.exists(this.constructor.name)) {
-            Component._componentGameObjects.add(this.constructor.name, []);
-        }
-
-        Component._componentGameObjects.findOne(this.constructor.name).push(gameObject);
-    }
+    public id: number;
+    public instanceId: number;
 }

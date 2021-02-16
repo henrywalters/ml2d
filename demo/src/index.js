@@ -6,8 +6,8 @@ import HCore from 'hcore';
 import { GameObject } from '../../dist/core/gameObject';
 import { Component } from '../../dist/core/component';
 
-const size = new Vector2D(1400, 900);
-const anchor = new Vector2D(size.x / 2, size.y / 4);
+const size = new Vector([1400, 900]);
+const anchor = new Vector([size.x / 2, size.y / 4]);
 const gravity = 1;
 const forceMultiplier = 4;
 let shot = 0;
@@ -134,22 +134,42 @@ class Demo extends ML2D.Game {
 class GameObjectDemo extends ML2D.Game {
     constructor(el, conf) {
         super(el, conf);
-        this.gameObjects = [];
-        this.root = null;
+        this.graph = null;
+        this.ticks = 0;
     }
 
     OnCreate() {
-        this.root = new GameObject();
-        this.root.addComponent(new ML2D.Components.Position2D());
+        this.root = this.gameObjects.instantiate();
+        this.root.addComponent(ML2D.Components.Position2D);
+        this.graph = new ML2D.Addons.Graph.Axis(new Vector([100, 100]), new Vector([500, 500]));
+        this.graph.origin.x = 0;
+        this.graph.origin.y = 0;
+
+        this.graph.setRange(new Vector([0, 120]));
+        this.graph.setDomain(new Vector([0, 5]));
+        this.graph.tickWidth.x = 1;
+        this.graph.tickWidth.y = 1;
+
+        window.graph = this.graph;
+        const dt = 0.25;
+        const data = [];
+
+        for (let i = -10 / dt; i <= 10 / dt; i++) {
+            data.push(new Vector([i * dt, i * i]));
+        }
+
+        this.fps = new ML2D.Addons.Graph.Lines.Straight(data);
+
+        this.graph.lines.push(this.fps)
     }
 
     OnUpdate(dt) {
         const pos = this.root.getComponent(ML2D.Components.Position2D);
         pos.move(VectorMath.multScalar(this.input.state.leftAxis, dt * 200));
 
-        console.log(pos.position.toString());
-        
         this.canvas.draw(new Circle(pos.position.copy(), 20));
+
+        this.canvas.draw(this.graph);
 
         /*ML2D.GameObject.traverse(this.root, (go) => {
             this.canvas.draw(new Circle(go.globalPos, 20));
@@ -176,16 +196,6 @@ const goDemo = new GameObjectDemo(document.getElementById('game'), {
     width: size.x,
     height: size.y,
 })
-
-const a = new Transform();
-const b = new Transform();
-const c = new CollisionComponent();
-const d = new CollisionComponent();
-
-console.log(Component._components);
-console.log(Component._instances);
-
-console.log(GameObject._instances);
 
 goDemo.run();
 
