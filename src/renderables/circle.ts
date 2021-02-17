@@ -14,6 +14,7 @@ export class Circle extends Renderable {
     }
 
     public draw(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath();
         ctx.arc(this.center.get(0), this.center.get(1), this.radius, 0, 2 * Math.PI, false);
         ctx.fillStyle = this.fillColor;
         ctx.fill();

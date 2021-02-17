@@ -7,9 +7,22 @@
   <body>
         <h1>ML2D Demo</h1>
         <div id='game'></div>
+        <div id='monitor'>
+            <div class="slidecontainer">
+                  <input type="range" min="1" max="100" value="50" class="slider" id="scaleSlider">
+            </div>
+        </div>
   </body>
   <footer>
         <script src="./index.js"></script>
-        <style src='./index.css'></style>
+        <style>
+              #monitor {
+                  float: right;
+            }
+
+            #game {
+                  float: left;
+            }
+        </style>
   </footer>
 </html>

@@ -1,9 +1,9 @@
 import { Vector } from "../core/vector";
 
 export abstract class GraphLine {
-    public data: Array<Vector | number>;
+    public data: Array<Vector>;
 
-    constructor(data: Array<Vector | number> = []) {
+    constructor(data: Array<Vector> = []) {
         this.data = data;
     }
 

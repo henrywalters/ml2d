@@ -3,6 +3,7 @@ import { Renderable } from "../core/renderable";
 import { Vector } from "../core/vector";
 import { VectorMath } from "../math/vectorMath";
 import { GraphLine } from "./graphLine";
+import { GraphPoint } from "./graphPoint";
 
 export class GraphAxis extends Renderable {
 
@@ -13,6 +14,7 @@ export class GraphAxis extends Renderable {
     public scale: Vector;
 
     public lines: GraphLine[];
+    public points: GraphPoint[];
 
     constructor(
         public pos: Vector, 
@@ -26,6 +28,7 @@ export class GraphAxis extends Renderable {
         this.origin = Vector.zero(2);
         this.scale = new Vector([(this.size.y / (this.range.y - this.range.x)), (this.size.x / (this.domain.y - this.domain.x))]);
         this.lines = [];
+        this.points = [];
     }
 
     public setRange(range: Vector) {
@@ -74,12 +77,16 @@ export class GraphAxis extends Renderable {
         ctx.lineTo(this.origin.x + mp.x + this.pos.x, this.pos.y + this.size.y);
         ctx.stroke();
 
+        ctx.font = '24px serif';
+        ctx.fillText(this.domain.x.toFixed(3), this.pos.x, this.origin.y + mp.y + this.pos.y + 30);
+        ctx.fillText(this.domain.y.toFixed(3), this.pos.x + this.size.x - 80, this.origin.y + mp.y + this.pos.y + 30);
+
         ctx.lineWidth = this.minorWidth;
 
-        const xTicks = Math.ceil(this.domain.y - this.domain.x);
+        const xTicks = Math.ceil((this.domain.y - this.domain.x) / this.tickWidth.x);
         const xTickWidth = this.size.x / xTicks;
 
-        const yTicks = Math.ceil(this.range.y - this.range.x);
+        const yTicks = Math.ceil((this.range.y - this.range.x) / this.tickWidth.y);
         const yTickWidth = this.size.y / yTicks;
 
         for (let i = 1; i <= xTicks; i++) {
@@ -94,17 +101,27 @@ export class GraphAxis extends Renderable {
             ctx.stroke();
         }
 
+        
+
         // Draw the lines
 
         for (const line of this.lines) {
             if (line.data.length >= 2) {
                 for (let i = 0; i < line.data.length - 1; i++) {
-                    const d1: Vector = typeof line.data[i] === 'number' ? new Vector([i, line.data[i] as number]) : line.data[i] as Vector;
-                    const d2: Vector = typeof line.data[i + 1] === 'number' ? new Vector([i + 1, line.data[i + 1] as number]) : line.data[i + 1] as Vector;
-                    const [x, y] = [this.adjustPoint(d1), this.adjustPoint(d2)];
+                    const [x, y] = [this.adjustPoint(line.data[i]), this.adjustPoint(line.data[i + 1])];
                     if (Collisions.pointInBox(x, this.pos, this.size) && Collisions.pointInBox(y, this.pos, this.size)) {
                         line.drawLine(ctx, i, x, y);
                     }
+                }
+            }
+        }
+
+        // Draw the points
+
+        for (const point of this.points) {
+            for (let i = 0; i < point.data.length; i++) {
+                if (Collisions.pointInBox(point.data[i], this.pos, this.size)) {
+                    point.draw(ctx, this.adjustPoint(point.data[i]));
                 }
             }
         }

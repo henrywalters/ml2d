@@ -1,5 +1,6 @@
 import { GraphAxis } from './addons/graphAxis';
 import { StraightGraphLine } from './addons/graphLine';
+import { DotGraphPoint } from './addons/graphPoint';
 import { Bot } from './core/bot';
 import { Canvas } from './core/canvas';
 import { Collisions } from './core/collisions';
@@ -10,7 +11,7 @@ import { GameObject } from './core/gameObject';
 import { Matrix } from './core/matrix';
 import { Vector } from './core/vector';
 import { DEG2RAD, RAD2DEG } from './math/constants';
-import { angle } from './math/functions';
+import { angle, sigmoid } from './math/functions';
 import { VectorMath } from './math/vectorMath';
 import { Circle } from './renderables/circle';
 import { Line } from './renderables/line';
@@ -27,6 +28,7 @@ const ML2D = {
     },
     Math: {
         angle: angle,
+        sigmoid: sigmoid,
     },
     Components: {
         Position2D: Position2DComponent,
@@ -36,6 +38,9 @@ const ML2D = {
             Axis: GraphAxis,
             Lines: {
                 Straight: StraightGraphLine,
+            },
+            Points: {
+                Dot: DotGraphPoint,
             }
         }
     },

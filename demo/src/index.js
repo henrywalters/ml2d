@@ -6,7 +6,7 @@ import HCore from 'hcore';
 import { GameObject } from '../../dist/core/gameObject';
 import { Component } from '../../dist/core/component';
 
-const size = new Vector([1400, 900]);
+const size = new Vector([800, 800]);
 const anchor = new Vector([size.x / 2, size.y / 4]);
 const gravity = 1;
 const forceMultiplier = 4;
@@ -37,9 +37,83 @@ class Projectile {
 
 window.ml = ML2D;
 
+
+class GameObjectDemo extends ML2D.Game {
+    constructor(el, conf) {
+        super(el, conf);
+        this.graph = null;
+        this.velLine = null;
+        this.fpsLine = null;
+
+        this.success = [];
+        this.fail = [];
+        this.ticks = 0;
+    }
+
+    OnCreate() {
+        this.root = this.gameObjects.instantiate();
+        this.root.addComponent(ML2D.Components.Position2D);
+        this.graph = new ML2D.Addons.Graph.Axis(Vector.zero(2), new Vector([800, 800]));
+        this.graph.origin.x = 0;
+        this.graph.origin.y = 0;
+
+        document.getElementById('scaleSlider').addEventListener("input", (e) => {
+            this.graph.scale = new Vector([e.srcElement.valueAsNumber, e.srcElement.valueAsNumber]);
+            this.fail.radius = Math.log(e.srcElement.valueAsNumber) * 1.5;
+            this.success.radius = Math.log(e.srcElement.valueAsNumber) * 2;
+        });
+
+        this.graph.setRange(new Vector([-30, 30]));
+        this.graph.setDomain(new Vector([-50, 50]));
+        this.graph.tickWidth.x = 7;
+        this.graph.tickWidth.y = 5;
+
+        window.graph = this.graph;
+        const dt = 0.25;
+
+        this.fail = new ML2D.Addons.Graph.Points.Dot("red", 5);
+        this.success = new ML2D.Addons.Graph.Points.Dot("green", 7);
+
+        this.graph.points.push(this.fail, this.success);
+    }
+
+    OnUpdate(dt) {
+        const pos = this.root.getComponent(ML2D.Components.Position2D);
+        pos.move(VectorMath.multScalar(this.input.state.leftAxis, dt * 200));
+
+        this.canvas.draw(new Circle(pos.position.copy(), 20));
+
+        this.canvas.draw(this.graph);
+
+        /*ML2D.GameObject.traverse(this.root, (go) => {
+            this.canvas.draw(new Circle(go.globalPos, 20));
+        });
+
+        if (this.input.state.firePressed) {
+            this.root.add().setGlobalPos(this.input.globalMousePos);
+        }
+        */
+
+        if (this.input.state.fireAltPressed) {
+            console.log("Right click");
+        }
+    }
+}
+
+
+
+
+const monitor = new GameObjectDemo(document.getElementById('monitor'), {
+    width: 800,
+    height: 800,
+})
+
+
+monitor.run();
+
 class Demo extends ML2D.Game {
 
-    constructor(el, conf) {
+    constructor(el, conf, monitor) {
         super(el, conf);
         this.line = null;
         this.circle = null;
@@ -95,8 +169,8 @@ class Demo extends ML2D.Game {
             } else {
                 const targOffset = VectorMath.subtract(projectile.initPos, this.targets[0].center);
                 const entry = new Vector([ML2D.Math.angle(projectile.direction), projectile.speed, ML2D.Math.angle(targOffset), targOffset.magnitude(), 0]);
+                monitor.fail.data.push(new Vector([entry.get(0) / 0.7, entry.get(1) / 1000]));
                 this.data.push(entry);
-                console.log(entry.toString());
             }
         }
 
@@ -120,7 +194,7 @@ class Demo extends ML2D.Game {
                 const targOffset = VectorMath.subtract(collidedWith.initPos, this.targets[0].center);
                 const entry = new Vector([ML2D.Math.angle(collidedWith.direction), collidedWith.speed, ML2D.Math.angle(targOffset), targOffset.magnitude(), 1]);
                 this.data.push(entry);
-                console.log(entry.toString());
+                monitor.success.data.push(new Vector([entry.get(0) / 0.7, entry.get(1) / 1000]));
                 this.addRandomTarget();
             }
         }
@@ -131,74 +205,15 @@ class Demo extends ML2D.Game {
     }
 }
 
-class GameObjectDemo extends ML2D.Game {
-    constructor(el, conf) {
-        super(el, conf);
-        this.graph = null;
-        this.ticks = 0;
-    }
-
-    OnCreate() {
-        this.root = this.gameObjects.instantiate();
-        this.root.addComponent(ML2D.Components.Position2D);
-        this.graph = new ML2D.Addons.Graph.Axis(new Vector([100, 100]), new Vector([500, 500]));
-        this.graph.origin.x = 0;
-        this.graph.origin.y = 0;
-
-        this.graph.setRange(new Vector([0, 120]));
-        this.graph.setDomain(new Vector([0, 5]));
-        this.graph.tickWidth.x = 1;
-        this.graph.tickWidth.y = 1;
-
-        window.graph = this.graph;
-        const dt = 0.25;
-        const data = [];
-
-        for (let i = -10 / dt; i <= 10 / dt; i++) {
-            data.push(new Vector([i * dt, i * i]));
-        }
-
-        this.fps = new ML2D.Addons.Graph.Lines.Straight(data);
-
-        this.graph.lines.push(this.fps)
-    }
-
-    OnUpdate(dt) {
-        const pos = this.root.getComponent(ML2D.Components.Position2D);
-        pos.move(VectorMath.multScalar(this.input.state.leftAxis, dt * 200));
-
-        this.canvas.draw(new Circle(pos.position.copy(), 20));
-
-        this.canvas.draw(this.graph);
-
-        /*ML2D.GameObject.traverse(this.root, (go) => {
-            this.canvas.draw(new Circle(go.globalPos, 20));
-        });
-
-        if (this.input.state.firePressed) {
-            this.root.add().setGlobalPos(this.input.globalMousePos);
-        }
-        */
-
-        if (this.input.state.fireAltPressed) {
-            console.log("Right click");
-        }
-    }
-}
-
-/*const demo = new Demo(document.getElementById('game'), {
+const demo = new Demo(document.getElementById('game'), {
     width: size.x,
     height: size.y,
 });
-*/
 
-const goDemo = new GameObjectDemo(document.getElementById('game'), {
-    width: size.x,
-    height: size.y,
-})
 
-goDemo.run();
+
+//goDemo.run();
 
 //demo.input.hideCursor();
 
-//demo.run();
+demo.run();

@@ -12,3 +12,7 @@ export function angle(vec: Vector) {
 
     return Math.atan2(vec.get(1), vec.get(0));
 }
+
+export function sigmoid(t: number) {
+    return 1/(1+Math.pow(Math.E, -t));
+}
