@@ -38,11 +38,25 @@ export class Game {
     }
 
     private gameLoop = (t: number) => {
+        const dt = (t - this.lastStart) / 1000;
         Game.Active = this;
+
+        this.systems.systems.forEvery((system) => {
+            system.OnBeforeUpdate();
+        })
+
         this.canvas.clear();
         this.input.poll();
-        this.OnUpdate((t - this.lastStart) / 1000);
+        this.OnUpdate(dt);
+        this.systems.systems.forEvery((system) => {
+            system.OnUpdate(dt);
+        })
         this.lastStart = t;
+
+        this.systems.systems.forEvery((system) => {
+            system.OnAfterUpdate();
+        })
+
         window.requestAnimationFrame(this.gameLoop);
     }
 
@@ -50,8 +64,14 @@ export class Game {
         this.running = true;
         Game.Active = this;
         this.OnCreate();
+        this.systems.systems.forEvery((system) => {
+            system.OnCreate();
+        });
         window.requestAnimationFrame(this.gameLoop);
         Game.Active = this;
+        this.systems.systems.forEvery((system) => {
+            system.OnDestroy();
+        });
         this.OnDestroy();
     }
 

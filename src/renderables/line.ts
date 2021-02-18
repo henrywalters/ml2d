@@ -1,7 +1,7 @@
-import { Renderable } from "../core/renderable";
+import { RenderComponent } from "../core/components/render";
 import { Vector } from "../core/vector";
 
-export class Line extends Renderable {
+export class Line extends RenderComponent {
 
     constructor(
         private readonly pointA: Vector, 

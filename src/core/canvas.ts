@@ -1,5 +1,5 @@
 import { Circle } from "../renderables/circle";
-import { Renderable } from "./renderable";
+import { RenderComponent } from "./components/render";
 import { Vector } from "./vector";
 
 export class Canvas {
@@ -21,7 +21,7 @@ export class Canvas {
         this.ctx.beginPath();
     }
 
-    public draw(renderable: Renderable) {
+    public draw(renderable: RenderComponent) {
         this.ctx.beginPath();
         renderable.draw(this.ctx);
     }

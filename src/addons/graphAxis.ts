@@ -1,11 +1,11 @@
 import { Collisions } from "../core/collisions";
-import { Renderable } from "../core/renderable";
+import { RenderComponent } from "../core/components/render";
 import { Vector } from "../core/vector";
 import { VectorMath } from "../math/vectorMath";
 import { GraphLine } from "./graphLine";
 import { GraphPoint } from "./graphPoint";
 
-export class GraphAxis extends Renderable {
+export class GraphAxis extends RenderComponent {
 
     public majorWidth = 2;
     public minorWidth = 1;
@@ -77,10 +77,12 @@ export class GraphAxis extends Renderable {
         ctx.lineTo(this.origin.x + mp.x + this.pos.x, this.pos.y + this.size.y);
         ctx.stroke();
 
-        ctx.font = '24px serif';
-        ctx.fillText(this.domain.x.toFixed(3), this.pos.x, this.origin.y + mp.y + this.pos.y + 30);
+        ctx.font = '14px serif';
+        /*ctx.fillText(this.domain.x.toFixed(3), this.pos.x, this.origin.y + mp.y + this.pos.y + 30);
         ctx.fillText(this.domain.y.toFixed(3), this.pos.x + this.size.x - 80, this.origin.y + mp.y + this.pos.y + 30);
-
+        ctx.fillText(this.range.x.toFixed(3), this.pos.x + this.origin.x + mp.x + 15, this.pos.y + 30);
+        ctx.fillText(this.range.x.toFixed(3), this.pos.x + this.origin.x + mp.x + 15, this.pos.y + this.size.y - 15);
+        */
         ctx.lineWidth = this.minorWidth;
 
         const xTicks = Math.ceil((this.domain.y - this.domain.x) / this.tickWidth.x);
@@ -93,6 +95,7 @@ export class GraphAxis extends Renderable {
             ctx.moveTo(this.pos.x + (xTickWidth * i) - xTickWidth / 2, this.origin.y + mp.y + this.pos.y - this.tickLength / 2);
             ctx.lineTo(this.pos.x + (xTickWidth * i) - xTickWidth / 2, this.origin.y + mp.y + this.pos.y + this.tickLength / 2);
             ctx.stroke();
+            ctx.fillText((i * this.tickWidth.x).toFixed(1), this.pos.x + (xTickWidth * i) - xTickWidth / 2 - 10, this.origin.y + mp.y + this.pos.y + 30);
         }
 
         for (let i = 1; i <= yTicks; i++) {

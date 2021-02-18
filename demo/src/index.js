@@ -58,15 +58,15 @@ class GameObjectDemo extends ML2D.Game {
         this.graph.origin.y = 0;
 
         document.getElementById('scaleSlider').addEventListener("input", (e) => {
-            this.graph.scale = new Vector([e.srcElement.valueAsNumber, e.srcElement.valueAsNumber]);
+            this.graph.setScale(new Vector([e.srcElement.valueAsNumber, e.srcElement.valueAsNumber]));
             this.fail.radius = Math.log(e.srcElement.valueAsNumber) * 1.5;
             this.success.radius = Math.log(e.srcElement.valueAsNumber) * 2;
         });
 
         this.graph.setRange(new Vector([-30, 30]));
         this.graph.setDomain(new Vector([-50, 50]));
-        this.graph.tickWidth.x = 7;
-        this.graph.tickWidth.y = 5;
+        this.graph.tickWidth.x = 2.5;
+        this.graph.tickWidth.y = 2.5;
 
         window.graph = this.graph;
         const dt = 0.25;

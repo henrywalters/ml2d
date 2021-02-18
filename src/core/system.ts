@@ -19,9 +19,9 @@ export class System {
 
     public id: number;
 
-    protected OnCreate() {}
-    protected OnBeforeUpdate() {}
-    protected OnUpdate(dt: number) {}
-    protected OnAfterUpdate() {}
-    protected OnDestroy() {}
+    public OnCreate() {}
+    public OnBeforeUpdate() {}
+    public OnUpdate(dt: number) {}
+    public OnAfterUpdate() {}
+    public OnDestroy() {}
 }

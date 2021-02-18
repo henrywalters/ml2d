@@ -13,8 +13,22 @@ export class ObjectManager<T> {
         this._size = 0;
     }
 
+    public forEvery(fn: (obj: T) => void) {
+        for (const object of this.iterator) {
+            fn(object);
+        }
+    }
+
+    public get iterator(): IterableIterator<T> {
+        return this.objects.values();
+    }
+
     public get all(): T[] {
-        return Object.values(this.objects);
+        const objs = [];
+        for (const obj of this.objects.values()) {
+            objs.push(obj);
+        }
+        return objs;
     }
 
     public get size(): number {

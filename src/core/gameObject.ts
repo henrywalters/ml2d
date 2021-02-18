@@ -48,6 +48,8 @@ export class GameObject {
     public addComponent<T extends Component>(ctr: new () => T): GameObject {
         const component = Game.Active.components.instantiate(ctr);
         this.components.add(ctr.name, component);
+        console.log(ctr.name);
+        Game.Active.components.registerGameObject(ctr, this);
         return this;
     }
 

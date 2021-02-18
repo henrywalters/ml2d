@@ -9,12 +9,15 @@ import { Position2DComponent } from './core/components/position';
 import { Game } from './core/game';
 import { GameObject } from './core/gameObject';
 import { Matrix } from './core/matrix';
+import { System } from './core/system';
 import { Vector } from './core/vector';
 import { DEG2RAD, RAD2DEG } from './math/constants';
 import { angle, sigmoid } from './math/functions';
 import { VectorMath } from './math/vectorMath';
 import { Circle } from './renderables/circle';
 import { Line } from './renderables/line';
+
+export { Config } from "./core/config";
 
 const ML2D = {
     DEG2RAD: DEG2RAD,
@@ -52,6 +55,7 @@ const ML2D = {
     Bot: Bot,
     GameObject: GameObject,
     Component: Component,
+    System: System,
 }
 
 export default ML2D;
