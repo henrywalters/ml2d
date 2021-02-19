@@ -1,5 +1,11 @@
 import { Component } from "../component";
+import { Transform } from "./transform";
 
-export abstract class RenderComponent extends Component {
-    abstract draw(ctx: CanvasRenderingContext2D): void;
+export class RenderComponent extends Component {
+
+    public dependsOn = [Transform];
+
+    public draw(): void {
+        throw new Error("Draw not implemented");
+    }
 }

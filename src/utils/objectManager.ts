@@ -40,7 +40,7 @@ export class ObjectManager<T> {
     }
 
     public exists(id: Id) {
-        return this.objects.hasOwnProperty(id);
+        return this.objects.has(id);
     }
 
     public findOne(id: Id): T {

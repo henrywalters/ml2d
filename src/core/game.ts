@@ -11,7 +11,8 @@ export class Game {
 
     // The currently processing game. This allows anything to globally call the current game.
     public static Active: Game;
-
+    
+    private timer: Timer;
     private lastStart: number;
 
     // Core systems
@@ -24,12 +25,15 @@ export class Game {
     public readonly components: ComponentManager;
     public readonly systems: SystemManager;
 
+    public debug = false;
+
     public running: boolean;
 
     constructor(el: HTMLDivElement, config: Config) {
         this.config = config;
         this.input = new Input(el);
         this.lastStart = Clock.now();
+        this.timer = new Timer();
         this.canvas = new Canvas(el, this.config.width, this.config.height);
 
         this.gameObjects = new GameObjectManager();
@@ -49,7 +53,13 @@ export class Game {
         this.input.poll();
         this.OnUpdate(dt);
         this.systems.systems.forEvery((system) => {
+            if (this.debug) {
+                this.timer.reset();
+            }
             system.OnUpdate(dt);
+            if (this.debug) {
+                console.log(`System ${system.constructor.name} took ${this.timer.duration}ms to execute`);
+            }
         })
         this.lastStart = t;
 
@@ -67,6 +77,11 @@ export class Game {
         this.systems.systems.forEvery((system) => {
             system.OnCreate();
         });
+
+        this.components.instances.forEvery((component) => {
+            component.checkDependencies();
+        });
+
         window.requestAnimationFrame(this.gameLoop);
         Game.Active = this;
         this.systems.systems.forEvery((system) => {

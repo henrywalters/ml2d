@@ -1,4 +1,4 @@
-import { Circle } from "../renderables/circle";
+import { Box, Circle, Line } from "../math";
 import { RenderComponent } from "./components/render";
 import { Vector } from "./vector";
 
@@ -23,18 +23,40 @@ export class Canvas {
 
     public draw(renderable: RenderComponent) {
         this.ctx.beginPath();
-        renderable.draw(this.ctx);
+        renderable.draw();
+        this.ctx.closePath();
     }
 
-    public drawCircle(center: Vector, radius: number) {
-        this.ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI, false);
-        this.ctx.fill();
-        this.ctx.stroke();
+    private drawCurrentContext(filled: boolean, color: string) {
+        if (filled) {
+            this.ctx.fillStyle = color;
+            this.ctx.fill();
+        } else {
+            this.ctx.strokeStyle = color;
+            this.ctx.stroke();
+        }
     }
 
-    public drawLine(p1: Vector, p2: Vector) {
-        this.ctx.moveTo(p1.x, p2.y);
-        this.ctx.lineTo(p2.x, p2.y);
+    public drawBox(box: Box, filled: boolean = false, color: string = "#FFFFF") {
+        this.ctx.beginPath();
+        this.ctx.rect(box.position.x, box.position.y, box.size.x, box.size.y);
+        this.drawCurrentContext(filled, color);
+        this.ctx.closePath();
+    }
+
+    public drawCircle(circle: Circle, filled: boolean = false, color: string = "#FFFFF") {
+        this.ctx.beginPath();
+        this.ctx.arc(circle.center.x, circle.center.y, circle.radius, 0, 2 * Math.PI, false);
+        this.drawCurrentContext(filled, color);
+        this.ctx.closePath();
+    }
+
+    public drawLine(line: Line, color: string = "#FFFFF") {
+        this.ctx.beginPath();
+        this.ctx.moveTo(line.p1.x, line.p2.y);
+        this.ctx.lineTo(line.p2.x, line.p2.y);
+        this.ctx.strokeStyle = color;
         this.ctx.stroke();
+        this.ctx.closePath();
     }
 }

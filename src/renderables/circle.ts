@@ -1,20 +1,17 @@
+import { Game } from "../core";
 import { RenderComponent } from "../core/components/render";
 import { Vector } from "../core/vector";
+import { VectorMath } from "../math";
 
-export class Circle extends RenderComponent {
-    public center: Vector;
-    public radius: number;
-    public fillColor: string = '#FFFFF';
-    public strokeColor: string = '#FFFFF';
+export class CircleRenderer extends RenderComponent {
+    public filled: boolean = false;
+    public color: string = "#FFFFF";
     public strokeWidth: number = 1;
 
-    public draw(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        ctx.fillStyle = this.fillColor;
-        ctx.arc(this.center.get(0), this.center.get(1), this.radius, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.lineWidth = this.strokeWidth;
-        ctx.strokeStyle = this.strokeColor;
-        ctx.stroke();
+    public draw() {
+        Game.Active.canvas.drawCircle({
+            center: VectorMath.add(this.gameObject.position, VectorMath.multScalar(this.gameObject.size, 0.5)),
+            radius: this.gameObject.size.x / 2,
+        }, this.filled, this.color);
     }
 }

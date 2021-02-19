@@ -1,7 +1,7 @@
 import { EPSILON } from "../math/constants";
 import { VectorMath } from "../math/vectorMath";
-import { Circle } from "../renderables/circle";
-import { Line } from "../renderables/line";
+import { CircleRenderer } from "../renderables/circle";
+import { LineRenderer } from "../renderables/line";
 import { Game } from "./game";
 import { Vector } from "./vector";
 
@@ -10,7 +10,7 @@ export class Bot {
     private target: Vector | null = null;
     private targetReachFn: () => void | null = null;
     public readonly pos: Vector = Vector.zero(2);
-    private cursor: Circle = new Circle(this.pos, 10, "blue", "blue");
+    private cursor: CircleRenderer = new CircleRenderer();
 
     constructor(
         private readonly moveSpeed: number,
@@ -24,7 +24,7 @@ export class Bot {
 
     public update(dt: number) {
 
-        this.cursor.center.setAll(this.pos);
+        // this.cursor.center.setAll(this.pos);
         this.game.canvas.draw(this.cursor);
 
         if (this.target) {

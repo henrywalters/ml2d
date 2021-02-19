@@ -1,5 +1,5 @@
 import { VectorMath } from "../math/vectorMath";
-import { Circle } from "../renderables/circle";
+import { Circle } from "../math/primitives";
 import { Vector } from "./vector";
 
 export class Collisions {

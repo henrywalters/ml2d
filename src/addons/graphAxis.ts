@@ -1,3 +1,4 @@
+import { Game } from "../core";
 import { Collisions } from "../core/collisions";
 import { RenderComponent } from "../core/components/render";
 import { Vector } from "../core/vector";
@@ -62,7 +63,8 @@ export class GraphAxis extends RenderComponent {
         return res;
     }
 
-    public draw(ctx: CanvasRenderingContext2D): void {
+    public draw(): void {
+        const ctx = Game.Active.canvas.ctx;
         const mp = VectorMath.multScalar(this.size, 0.5);
 
         if (this.border) {

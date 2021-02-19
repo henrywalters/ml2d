@@ -30,6 +30,16 @@ export class Vector {
         return Vector.zero(size).map(x => HCore.Random.float(min, max));
     }
 
+    public equals(vec: Vector) {
+        if (vec.dim !== this.dim) return false;
+        for (let i = 0; i < this.dim; i++) {
+            if (vec.get(i) !== this.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public copy(): Vector {
         return this.map((x) => x);
     }

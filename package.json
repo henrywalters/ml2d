@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "watch": "find src/ | entr tsc",
+    "watch": "find src/ | entr ./compile.sh",
     "demo-serve": "node demo/server.js",
-    "demo-build": "cd demo && webpack && cd ..",
-    "demo-watch": "cd demo && webpack --watch && cd .."
+    "demo-build": "./compile-demo.sh",
+    "demo-watch": "find demo src | entr ./compile-demo.sh"
   },
   "author": "Henry Walters",
   "license": "ISC",
